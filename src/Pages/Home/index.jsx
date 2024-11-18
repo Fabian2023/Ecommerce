@@ -3,23 +3,25 @@ import Card from "../../Components/Card";
 import ProductDetail from "../../Components/ProductDetail";
 import { useContext } from "react";
 import { ContextShop } from "../../Context/index";
+import ReactPaginate from "react-paginate";
 
 const Home = () => {
   const context = useContext(ContextShop);
 
   const renderView = () => {
-    if (context.searchTitle?.length > 0) {
-      if(context.filteredItems?.length >0){
-        return (context.filteredItems?.map((item) => <Card key={item.id} data={item} />))
-
-      }else{
-        return(
-          <div>no hay nada</div>
-        )
-      }
+    if (context.filteredItems?.length > 0) {
+      return context.filteredItems.map((item) => (
+        <Card key={item.id} data={item} />
+      ));
     } else {
-      return(context.items?.map((item) => <Card key={item.id} data={item} />)) ;
+      return <div>no hay nada</div>;
     }
+  };
+  
+
+
+  const handlePageClick = (event) => {
+    context.setCurrentPage(event.selected);
   };
 
   return (
@@ -35,6 +37,23 @@ const Home = () => {
       />
 
       <div className="grid gap-4  grid-cols-3 ">{renderView()}</div>
+      <ReactPaginate
+        previousLabel={"← Anterior"}
+        nextLabel={"Siguiente →"}
+        breakLabel={"..."}
+        pageCount={context.totalPages}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={3}
+        onPageChange={handlePageClick}
+        containerClassName="flex justify-center items-center mt-4 gap-2"
+        activeClassName="bg-blue-500 text-white font-bold"
+        previousClassName="px-3 py-1 border rounded hover:bg-gray-200"
+        nextClassName="px-3 py-1 border rounded hover:bg-gray-200"
+        pageClassName="px-3 py-1 border rounded hover:bg-gray-200"
+        breakClassName="px-3 py-1"
+        disabledClassName="opacity-50 cursor-not-allowed"
+      />
+
       <ProductDetail />
     </Layout>
   );
