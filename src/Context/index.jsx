@@ -15,6 +15,10 @@ export const ProviderShop = ({ children }) => {
   const [searchByCategory, setSearchByCategory] = useState(null);
   const [filteredItems, setFilteredItems] = useState(null);
   const [currentPage, setCurrentPage] = useState(0); // Página actual
+  const[singInisOpen,setsingInisOpen ] = useState(false)
+
+
+ 
 
   // Fetch para cargar productos por página
   const fetchProducts = async (category = null) => {
@@ -129,6 +133,8 @@ export const ProviderShop = ({ children }) => {
         setSearchByCategory,
         searchByCategory,
         filteredItemsByCategory,
+        singInisOpen,
+        setsingInisOpen
       }}
     >
       {children}

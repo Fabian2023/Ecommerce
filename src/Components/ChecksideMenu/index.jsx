@@ -9,6 +9,8 @@ import { totalPrice } from "../../Utils";
 const CheckoutSideMenu = () => {
   const context = useContext(ContextShop);
 
+  if (context.singInisOpen) return null;
+
   const deleteOrder = (id) => {
     const deleteProducts = context.carProducts.filter(
       (product) => product.id != id
@@ -37,9 +39,13 @@ const CheckoutSideMenu = () => {
 
   return (
     <aside
-      className={` ${
-        context.isOpencheckoutSideMenu ? "flex" : "hidden"
-      } Checkout-side-menu flex flex-col fixed left-5 border border-gray-300  rounded-lg bg-white`}
+      className={`Checkout-side-menu flex flex-col fixed left-5 border border-gray-300 rounded-lg bg-white transition-transform ${
+        context.singInisOpen
+          ? "translate-x-full" // Oculta el menú si singInisOpen está activo
+          : context.isOpencheckoutSideMenu
+          ? "translate-x-0" // Muestra el menú si está abierto
+          : "hidden" // Oculta completamente si no está abierto
+      }`}
     >
       <div className="flex justify-between items-center p-6 ">
         <h2 className="font-medium text-xl">My Order</h2>

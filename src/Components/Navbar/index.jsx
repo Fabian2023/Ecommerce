@@ -102,6 +102,7 @@ const Navbar = () => {
         <li>
           <NavLink
             to="/SignIn"
+            onClick={() => context.setSingInisOpen(true)}  
             className={({ isActive }) => (isActive ? activeStyle : undefined)}
           >
             Sign In

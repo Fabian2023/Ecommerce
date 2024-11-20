@@ -13,7 +13,8 @@ const MyOrders= ()=>{
     if(index === 'last') index= context.order?.length -1
     
     return(
-        <Layout><div className="flex gap-20 mb-9">
+        <Layout>
+          <div className="flex gap-20 mb-9">
         <Link to="/my-orders">
         <svg
           xmlns="http://www.w3.org/2000/svg"
