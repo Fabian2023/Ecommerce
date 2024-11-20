@@ -13,29 +13,23 @@ export const ProviderShop = ({ children }) => {
   const [items, setItems] = useState([]); // Productos actuales de la página
   const [searchTitle, setSearchTitle] = useState(null);
   const [searchByCategory, setSearchByCategory] = useState(null);
-  console.log("searchCategory:", searchByCategory);
-  
   const [filteredItems, setFilteredItems] = useState(null);
   const [currentPage, setCurrentPage] = useState(0); // Página actual
-  const [totalPages, setTotalPages] = useState(0); // Número total de páginas
-  const itemsPerPage = 18; // Productos por página
-  
+
   // Fetch para cargar productos por página
-  const fetchProducts = async (page = 1, category = null) => {
+  const fetchProducts = async (category = null) => {
     try {
-      let url = `https://fakestoreapi.in/api/products?page=${page}&limit=${itemsPerPage}`;
-      
-      // Si hay una categoría, actualiza la URL para filtrar por categoría
+      let url = "https://fakestoreapi.in/api/products?limit=150";
+
       if (category) {
-        url = `https://fakestoreapi.in/api/products/category?type=${category}&page=${page}&limit=${itemsPerPage}`;
+        url = `https://fakestoreapi.in/api/products/category?type=${category}`;
       }
-  
+
       const response = await fetch(url);
       const data = await response.json();
-  
+
       if (data.status === "SUCCESS") {
         setItems(data.products);
-        setTotalPages(Math.ceil(100 / itemsPerPage)); // Total de productos dividido entre el límite
       } else {
         console.error("Error en la API:", data.message);
       }
@@ -46,27 +40,23 @@ export const ProviderShop = ({ children }) => {
 
   useEffect(() => {
     // Cargar productos de la primera página al montar el contexto
-    fetchProducts(currentPage + 1);
-  }, [currentPage]);
+    fetchProducts();
+  }, []);
 
   // Filtro por título
   const filteredItemsByTitle = (items, searchTitle) => {
-    console.log("Filtrando por título:", searchTitle);
     return items?.filter((item) =>
       item.title.toLowerCase().includes(searchTitle?.toLowerCase())
     );
   };
-  
+
   const filteredItemsByCategory = (items, searchByCategory) => {
-    console.log("Filtrando por categoría:", searchByCategory);
     return items?.filter((item) =>
       item.category?.toLowerCase().includes(searchByCategory?.toLowerCase())
     );
   };
 
   const filterBy = (searchType, items, searchTitle, searchByCategory) => {
-    console.log("Filtrando con tipo:", searchType);
-    console.log("items:", items);
     if (searchType === "by_title") {
       return filteredItemsByTitle(items, searchTitle);
     }
@@ -84,20 +74,24 @@ export const ProviderShop = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("Buscando con searchTitle:", searchTitle, "y searchByCategory:", searchByCategory);
     if (searchTitle && searchByCategory) {
-      setFilteredItems(filterBy("by_title_and_category", items, searchTitle, searchByCategory));
+      setFilteredItems(
+        filterBy("by_title_and_category", items, searchTitle, searchByCategory)
+      );
     } else if (searchTitle && !searchByCategory) {
-      setFilteredItems(filterBy("by_title", items, searchTitle, searchByCategory));
+      setFilteredItems(
+        filterBy("by_title", items, searchTitle, searchByCategory)
+      );
     } else if (!searchTitle && searchByCategory) {
-      setFilteredItems(filterBy("by_category", items, searchTitle, searchByCategory));
+      setFilteredItems(
+        filterBy("by_category", items, searchTitle, searchByCategory)
+      );
     } else {
       setFilteredItems(filterBy(null, items, searchTitle, searchByCategory));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, searchTitle, searchByCategory]);
-
-  console.log("filteredItems:", filteredItems);
 
   const openProductDetail = () => setIsOpenDetail(true);
   const closeProductDetail = () => setIsOpenDetail(false);
@@ -130,11 +124,11 @@ export const ProviderShop = ({ children }) => {
         setFilteredItems,
         currentPage,
         setCurrentPage,
-        totalPages,
+        // totalPages,
         fetchProducts,
         setSearchByCategory,
         searchByCategory,
-        filteredItemsByCategory
+        filteredItemsByCategory,
       }}
     >
       {children}

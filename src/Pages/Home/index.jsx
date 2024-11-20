@@ -3,7 +3,7 @@ import Card from "../../Components/Card";
 import ProductDetail from "../../Components/ProductDetail";
 import { useContext } from "react";
 import { ContextShop } from "../../Context/index";
-import ReactPaginate from "react-paginate";
+//import ReactPaginate from "react-paginate";
 
 const Home = () => {
   const context = useContext(ContextShop);
@@ -14,15 +14,15 @@ const Home = () => {
         <Card key={item.id} data={item} />
       ));
     } else {
-      return <div>no hay nada</div>;
+      return <div>No hay productos disponibles🚀</div>;
     }
   };
   
 
 
-  const handlePageClick = (event) => {
-    context.setCurrentPage(event.selected);
-  };
+  // const handlePageClick = (event) => {
+  //   context.setCurrentPage(event.selected);
+  // };
 
   return (
     <Layout>
@@ -37,23 +37,6 @@ const Home = () => {
       />
 
       <div className="grid gap-4  grid-cols-3 ">{renderView()}</div>
-      <ReactPaginate
-        previousLabel={"← Anterior"}
-        nextLabel={"Siguiente →"}
-        breakLabel={"..."}
-        pageCount={context.totalPages}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
-        onPageChange={handlePageClick}
-        containerClassName="flex justify-center items-center mt-4 gap-2"
-        activeClassName="bg-blue-500 text-white font-bold"
-        previousClassName="px-3 py-1 border rounded hover:bg-gray-200"
-        nextClassName="px-3 py-1 border rounded hover:bg-gray-200"
-        pageClassName="px-3 py-1 border rounded hover:bg-gray-200"
-        breakClassName="px-3 py-1"
-        disabledClassName="opacity-50 cursor-not-allowed"
-      />
-
       <ProductDetail />
     </Layout>
   );
