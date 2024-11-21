@@ -15,10 +15,19 @@ export const ProviderShop = ({ children }) => {
   const [searchByCategory, setSearchByCategory] = useState(null);
   const [filteredItems, setFilteredItems] = useState(null);
   const [currentPage, setCurrentPage] = useState(0); // Página actual
-  const[singInisOpen,setsingInisOpen ] = useState(false)
+  const [singInisOpen, setsingInisOpen] = useState(false);
+  const [users, setUsers] = useState([]);
 
+  const createUser = ({ name, lastname, email, password }) => {
+    console.log({ name, lastname, email, password });
+    if (!name || !lastname || !email || !password) {
+      alert("digita todos los campos 💫");
+      return;
+    }
 
- 
+    const newUser = { name, lastname, email, password };
+    setUsers((prevUsers) => [...prevUsers, newUser]);
+  };
 
   // Fetch para cargar productos por página
   const fetchProducts = async (category = null) => {
@@ -134,7 +143,10 @@ export const ProviderShop = ({ children }) => {
         searchByCategory,
         filteredItemsByCategory,
         singInisOpen,
-        setsingInisOpen
+        setsingInisOpen,
+        createUser,
+        setUsers,
+        users,
       }}
     >
       {children}
