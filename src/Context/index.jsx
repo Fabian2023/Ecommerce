@@ -1,4 +1,9 @@
 import { createContext, useState, useEffect } from "react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+import app from "../../firebase/firebase"
+
+const auth = getAuth(app);
 
 export const ContextShop = createContext();
 
@@ -18,15 +23,26 @@ export const ProviderShop = ({ children }) => {
   const [singInisOpen, setsingInisOpen] = useState(false);
   const [users, setUsers] = useState([]);
 
-  const createUser = ({ name, lastname, email, password }) => {
-    console.log({ name, lastname, email, password });
+  const createUser = async ({ name, lastname, email, password }) => {
     if (!name || !lastname || !email || !password) {
-      alert("digita todos los campos 💫");
+      alert("Por favor, llena todos los campos.");
       return;
     }
 
-    const newUser = { name, lastname, email, password };
-    setUsers((prevUsers) => [...prevUsers, newUser]);
+    try {
+      // Crear un usuario con el correo y la contraseña
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Guardar el nuevo usuario en el estado
+      const newUser = { name, lastname, email, userId: user.uid };
+      setUsers((prevUsers) => [...prevUsers, newUser]);
+
+      alert("Usuario creado con éxito");
+    } catch (error) {
+      console.error(error.message);
+      alert("Error al crear el usuario: " + error.message);
+    }
   };
 
   // Fetch para cargar productos por página

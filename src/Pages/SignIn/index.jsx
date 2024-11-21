@@ -30,7 +30,13 @@ const SignIn = () => {
     const { name, lastname, email, password } = formData;
     if (name && lastname && email && password) {
       context.createUser({name, lastname, email, password}); // Llamamos al contexto
-      alert("usuario creado")
+      
+      setFormData({
+        name: "",
+        lastname: "",
+        email: "",
+        password: "",
+      });
     } else {
       alert("Por favor, llena todos los campos.");
     }
