@@ -82,7 +82,7 @@ const Navbar = () => {
        
       </ul>
       <ul className="flex items-center gap-3">
-        <li className="text-black/60">fasalpe34@gmail.com</li>
+        <li className="text-black/60">{context.loggedEmail}</li>
         <li>
           <NavLink
             to="/my-orders/last"

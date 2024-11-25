@@ -20,8 +20,15 @@ const Orders = () => {
             totalProducts={order.totalProducts}
           />
         </Link>
+        
       ))}
-      
+       <button
+            type="button"
+              
+              className="bg-[#f0b90b] text-sm mt-6 w-56 rounded-md h-10 animate-glow"
+            >
+              Buy!
+            </button>
     </Layout>
   );
 };

@@ -1,7 +1,10 @@
 import { createContext, useState, useEffect } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
+import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import Modal from "react-modal"
 import app from "../../firebase/firebase"
+
+Modal.setAppElement("#root");
+
 
 const auth = getAuth(app);
 
@@ -19,9 +22,13 @@ export const ProviderShop = ({ children }) => {
   const [searchTitle, setSearchTitle] = useState(null);
   const [searchByCategory, setSearchByCategory] = useState(null);
   const [filteredItems, setFilteredItems] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0); // Página actual
   const [singInisOpen, setsingInisOpen] = useState(false);
   const [users, setUsers] = useState([]);
+  const[isModalCreateUSer, setisModalCreateUSer] = useState(false)
+  const[ isModalLoginUSer, setisModalLoginUSer]= useState(false)
+  const[isMoldalLoginBad, setisMoldalLoginBad] = useState(false)
+  const[loggedEmail, setloggedEmail] = useState("")
+  //const[isLogged, setisLogged] = useState("")
 
   const createUser = async ({ name, lastname, email, password }) => {
     if (!name || !lastname || !email || !password) {
@@ -38,13 +45,32 @@ export const ProviderShop = ({ children }) => {
       const newUser = { name, lastname, email, userId: user.uid };
       setUsers((prevUsers) => [...prevUsers, newUser]);
 
-      alert("Usuario creado con éxito");
+      setisModalCreateUSer(true); 
     } catch (error) {
       console.error(error.message);
       alert("Error al crear el usuario: " + error.message);
     }
   };
+  const closeModalCreateUser = () => {
+    setisModalCreateUSer(false); // Cierra el modal
+  };
 
+  
+  const loginUser = async(email, password)=>{
+    try { await signInWithEmailAndPassword(auth,email,password)
+      setisModalLoginUSer(true)
+      setloggedEmail(email)
+    } catch (error) {
+      console.error(error.message)
+      setisMoldalLoginBad(true)
+      
+    }
+  }
+    const closeModalLoginUser =()=>{
+    setisModalLoginUSer(false)
+    setisMoldalLoginBad(false)
+
+  }
   // Fetch para cargar productos por página
   const fetchProducts = async (category = null) => {
     try {
@@ -151,9 +177,6 @@ export const ProviderShop = ({ children }) => {
         setSearchTitle,
         filteredItems,
         setFilteredItems,
-        currentPage,
-        setCurrentPage,
-        // totalPages,
         fetchProducts,
         setSearchByCategory,
         searchByCategory,
@@ -163,6 +186,17 @@ export const ProviderShop = ({ children }) => {
         createUser,
         setUsers,
         users,
+        setisModalCreateUSer,
+        isModalCreateUSer,
+        closeModalCreateUser,
+        loginUser,
+        setisModalLoginUSer,
+        isModalLoginUSer,
+        closeModalLoginUser,
+        isMoldalLoginBad,
+        setisMoldalLoginBad,
+        loggedEmail,
+        setloggedEmail
       }}
     >
       {children}

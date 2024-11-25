@@ -1,14 +1,23 @@
 import Layout from "../../Components/Layout";
-import { useState } from "react";
-import { useContext } from "react";
+import { useState, useContext} from "react";
+import{useNavigate} from "react-router-dom"
 import { ContextShop } from "../../Context/index";
+import Modal from "react-modal"
+
+
+// Configurar el elemento raíz del modal
+Modal.setAppElement("#root");
 
 const SignIn = () => {
   const context = useContext(ContextShop);
+  const navigate = useNavigate()
 
   const [activeButton, setActiveButton] = useState("login"); // Estado inicial en "login"
   const [showSignUp, setShowSignUp] = useState(false);
   const [showLogin, setShowLogin] = useState(true); // El formulario "Log in" se muestra por defecto
+  const[isModalOpen, setIsModalOpen] = useState(false)
+  const[continueButtonModal, setContinueButtonModal] = useState(false)
+  const [loginUser,setLoginUser ] = useState({email:"", password:""})
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
@@ -16,11 +25,45 @@ const SignIn = () => {
     password: "",
   });
 
+  const handlerLoginUser = (e) => {
+    const { name, value } = e.target;
+    console.log("Input changed:", name, value);
+    setLoginUser((prev) => {
+      const updatedUser = { ...prev, [name]: value };
+      console.log("Updated loginUser:", updatedUser); // Verifica cómo se actualiza el estado
+      return updatedUser;
+    });
+  };
+  
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const { email, password } = loginUser;
+  
+    if (!email || !password) {
+      setContinueButtonModal(true)
+      return;
+    }
+  
+    context.loginUser(email, password); // Llamada al contexto
+    
+    setLoginUser({email:"", password:""})
+  
+  };
+
+  const handlerNavigate = ()=>{
+  navigate("/")
+  }
+  
+  
+
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => {
       const updatedFormData = { ...prevFormData, [name]: value };
-      console.log(updatedFormData);  // Para verificar si se está actualizando el estado
+        
       return updatedFormData;
     });
   };
@@ -38,7 +81,7 @@ const SignIn = () => {
         password: "",
       });
     } else {
-      alert("Por favor, llena todos los campos.");
+      setIsModalOpen(true); 
     }
   };
 
@@ -52,6 +95,14 @@ const SignIn = () => {
     setActiveButton("login");
     setShowLogin(true);
     setShowSignUp(false);
+
+  };
+
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Cierra el modal
+    setContinueButtonModal(false)
+    context.setisModalLoginUSer(false)
   };
 
   return (
@@ -66,7 +117,7 @@ const SignIn = () => {
                 : "bg-[#424242] hover:bg-[#F0B90B]" // Color normal y hover
             }`}
         >
-          Sign up
+          Register
         </button>
         <button
           onClick={handleLoginClick}
@@ -82,16 +133,22 @@ const SignIn = () => {
       </div>
       <div className="bg-[url('/back.jpg')] grid grid-cols-2 gap-4 p-6 rounded-lg w-[50%] h-[400px]">
         {showLogin && (
-          <form className="flex flex-col justify-center items-center">
+          <form className="flex flex-col justify-center items-center" onSubmit={handleLogin} >
             <h2 className="text-white text-sm">We love having you back</h2>
             <input
               type="text"
-              placeholder="Mail"
+              placeholder="Email"
+              name= "email"
+              value={loginUser.email}
+              onChange={handlerLoginUser}
               className="w-56 h-8 top-2 mt-4 text-xs rounded-md px-2 focus:outline-none"
             />
             <input
               type="password"
               placeholder="Password"
+              onChange={handlerLoginUser}
+              value={loginUser.password}
+              name="password"
               className="w-56 h-8 border-2 text-xs rounded-md px-2 mt-3 focus:outline-none"
             />
             <button className="bg-[#F0B90B] text-sm mt-6 w-56 rounded-md h-10">
@@ -159,6 +216,89 @@ const SignIn = () => {
         alt="Man"
         className="relative w-[25%] h-full mt-[-330px] ml-72 object-cover"
       />
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Campos requeridos"
+        className="bg-black  p-4 rounded-lg shadow-md w-[20%] mx-auto mt-20  flex flex-col items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center"
+      >
+       
+        <p className="text-white">Please fill in all the fields</p>
+        <button
+          onClick={closeModal}
+          className="bg-[#F0B90B]   text-black px-4 py-2 rounded-md  mt-4"
+        >
+          Close
+        </button>
+      </Modal>
+      <Modal
+        isOpen={context.isModalCreateUSer}
+        onRequestClose={context.closeModalCreateUser}
+        contentLabel="Campos requeridos"
+        className="bg-black  p-4 rounded-lg shadow-md w-[20%] mx-auto mt-20  flex flex-col items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center"
+      >
+       
+        <p className="text-white">Great! User created.</p>
+        <button
+          onClick={context.closeModalCreateUser}
+          className="bg-[#F0B90B]   text-black px-4 py-2 rounded-md  mt-4"
+        >
+          Close
+        </button>
+      </Modal>
+      <Modal
+        isOpen={continueButtonModal}
+        onRequestClose={closeModal}
+        contentLabel="Campos requeridos"
+        className="bg-black  p-4 rounded-lg shadow-md w-[25%] mx-auto mt-20  flex flex-col items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center"
+      >
+       
+        <p className="text-white">Please fill in all the fields before continuing. </p>
+        <button
+          onClick={closeModal}
+          className="bg-[#F0B90B]   text-black px-4 py-2 rounded-md  mt-4"
+        >
+          Close
+        </button>
+      </Modal>
+      <Modal
+        isOpen={context.isModalLoginUSer}
+        onRequestClose={context.closeModalLoginUser}
+        contentLabel="Campos requeridos"
+        className="bg-black  p-4 rounded-lg shadow-md w-[25%] mx-auto mt-20  flex flex-col items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center"
+      >
+       
+        <p className="text-white">  Welcome Login succesfull</p>
+        <button
+            onClick={() => {
+              context.closeModalLoginUser(); // Cerrar el modal
+              handlerNavigate(); // Navegar a "/"
+            }}
+          className="bg-[#F0B90B]   text-black px-4 py-2 rounded-md  mt-4"
+        >
+          Close
+        </button>
+      </Modal>
+      <Modal
+        isOpen={context.isMoldalLoginBad}
+        onRequestClose={context.closeModalLoginUser}
+        contentLabel="Campos requeridos"
+        className="bg-black  p-4 rounded-lg shadow-md w-[25%] mx-auto mt-20  flex flex-col items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center"
+      >
+       
+        <p className="text-white">Oops, check your data.</p>
+        <button
+          onClick={context.closeModalLoginUser}
+          className="bg-[#F0B90B]   text-black px-4 py-2 rounded-md  mt-4"
+        >
+          Close
+        </button>
+      </Modal>
     </Layout>
   );
 };

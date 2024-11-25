@@ -5,7 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: { keyframes: {
+      pulseGlow: {
+        '0%, 100%': { backgroundColor: '#f0b90b' }, // Color base
+        '50%': { backgroundColor: '#f3c04d' }, // Color más claro
+      },
+    },
+    animation: {
+      glow: 'pulseGlow 1.5s ease-in-out infinite', // Define la animación
+    },
+  },
   },
   plugins: [],
 }
